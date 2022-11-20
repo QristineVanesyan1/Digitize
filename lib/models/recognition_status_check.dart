@@ -1,4 +1,3 @@
-import 'package:diplomayin/models/word.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'recognition_status_check.g.dart';

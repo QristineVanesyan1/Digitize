@@ -5,6 +5,7 @@ part 'text_anotation.g.dart';
 
 @JsonSerializable()
 class TextAnnotation {
+  // ignore: non_constant_identifier_names
   final List<Page> Pages;
 
   TextAnnotation(this.Pages);

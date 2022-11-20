@@ -1,5 +1,4 @@
 import 'package:diplomayin/models/recognition_status_check.dart';
-import 'package:diplomayin/models/validations.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'validations.g.dart';

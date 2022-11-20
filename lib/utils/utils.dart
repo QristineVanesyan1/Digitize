@@ -1,0 +1,72 @@
+import 'dart:convert';
+import 'package:diplomayin/env/env.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+
+abstract class Utils {
+  static Future<String> makeRequest(String path) async {
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            'https://backend.scandocflow.com/v1/api/documents/extract?access_token=${Env.key}'));
+    request.files.add(await http.MultipartFile.fromPath('type', path));
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      return (await response.stream.bytesToString());
+    }
+    if (response.statusCode == 401) {
+      throw Exception('Authorization Error');
+    } else {
+      throw Exception('Something went wrong');
+    }
+  }
+
+  static String decodeBase64(String base64Txt) =>
+      utf8.decode(base64.decode(base64Txt));
+
+  static void pushReplacement(BuildContext context, Widget screen) =>
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => screen),
+      );
+
+  static void navigatorPush(BuildContext context, Widget screen) =>
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => screen),
+      );
+
+  static void navigatorPop(BuildContext context) => Navigator.of(context).pop();
+
+  static void showAppBottomSheet(BuildContext context, Widget child) =>
+      showModalBottomSheet<void>(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0))),
+          context: context,
+          builder: (BuildContext context) {
+            return child;
+          });
+
+  static void showAppDialog(BuildContext context, Widget child) {
+    showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return child;
+        });
+  }
+
+  static Widget refreshWidget(
+          Key key, RefreshCallback onRefresh, Widget child) =>
+      RefreshIndicator(key: key, onRefresh: onRefresh, child: child);
+
+  static Widget gridWidget(List<Widget> children) => GridView.count(
+      primary: false,
+      padding: const EdgeInsets.all(20),
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
+      crossAxisCount: 2,
+      children: children);
+}
