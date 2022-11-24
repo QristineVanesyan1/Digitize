@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1012204254438",
+    "project_id": "digitize-706b5",
+    "storage_bucket": "digitize-706b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012204254438:android:ae5221a578d7905cd3f727",
+        "android_client_info": {
+          "package_name": "com.example.diplomayin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012204254438-keeglgi48sc6ppa34gggnmb8qqlt11mm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPgZ1JnJhYsyroQVfnPEbwvqJQhLJXIP8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012204254438-keeglgi48sc6ppa34gggnmb8qqlt11mm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1012204254438-hu67ngv8ve7mj6aa9k6a1o80oehgg4fv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.diplomayin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,28 +1,10 @@
 import 'dart:convert';
+import 'package:diplomayin/constants/constants.dart';
 import 'package:diplomayin/env/env.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 abstract class Utils {
-  static Future<String> makeRequest(String path) async {
-    var request = http.MultipartRequest(
-        'POST',
-        Uri.parse(
-            'https://backend.scandocflow.com/v1/api/documents/extract?access_token=${Env.key}'));
-    request.files.add(await http.MultipartFile.fromPath('type', path));
-
-    http.StreamedResponse response = await request.send();
-
-    if (response.statusCode == 200) {
-      return (await response.stream.bytesToString());
-    }
-    if (response.statusCode == 401) {
-      throw Exception('Authorization Error');
-    } else {
-      throw Exception('Something went wrong');
-    }
-  }
-
   static String decodeBase64(String base64Txt) =>
       utf8.decode(base64.decode(base64Txt));
 
@@ -58,6 +40,11 @@ abstract class Utils {
         });
   }
 
+  static AppBar appBar() => AppBar(
+        centerTitle: true,
+        title: const Text(Constants.appTitle),
+      );
+
   static Widget refreshWidget(
           Key key, RefreshCallback onRefresh, Widget child) =>
       RefreshIndicator(key: key, onRefresh: onRefresh, child: child);
@@ -69,4 +56,29 @@ abstract class Utils {
       mainAxisSpacing: 10,
       crossAxisCount: 2,
       children: children);
+
+  static Widget listViewWidget(List<Widget> children) => ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+      itemBuilder: (BuildContext context, int index) => children[index],
+      itemCount: children.length,
+      separatorBuilder: (BuildContext context, int index) => Divider());
+
+  static Future<String> makeRequest(String path) async {
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            'https://backend.scandocflow.com/v1/api/documents/extract?access_token=${Env.key}'));
+    request.files.add(await http.MultipartFile.fromPath('type', path));
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      return (await response.stream.bytesToString());
+    }
+    if (response.statusCode == 401) {
+      throw Exception('Authorization Error');
+    } else {
+      throw Exception('Something went wrong');
+    }
+  }
 }

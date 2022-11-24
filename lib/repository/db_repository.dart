@@ -8,6 +8,7 @@ class DbRepository {
   static String table = 'ocr';
   static String columnId = 'id';
   static String path = 'path';
+  static String isFavorite = 'is_favorite';
   static String image = 'image';
   static String timestamp = 'timestamp';
   static Future<Database?> getDb() async {
@@ -23,6 +24,7 @@ class DbRepository {
           $columnId integer primary key autoincrement, 
           $path text not null,
           $image text not null,
+          $isFavorite boolean not null,
           $timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)
         ''');
     });

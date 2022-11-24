@@ -32,10 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(Constants.appTitle),
-      ),
+      appBar: Utils.appBar(),
       body: Center(
           child: SingleChildScrollView(
         child: Container(
