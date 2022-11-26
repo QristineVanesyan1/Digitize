@@ -1,3 +1,6 @@
+import 'package:diplomayin/screens/home_screen.dart';
+import 'package:diplomayin/screens/main_screen.dart';
+import 'package:diplomayin/screens/sign_up_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
 import 'package:diplomayin/widget/option_button.dart';
 import 'package:diplomayin/widget/picker_button.dart';
@@ -14,6 +17,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  late final TextEditingController _textEditingController1 =
+      TextEditingController();
+  late final TextEditingController _textEditingController2 =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,65 +31,86 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    'Login',
+                  SizedBox(
+                    height: 100,
+                  ),
+                  const Text(
+                    'Sign In',
                     style: TextStyle(
                         color: Colors.black87,
                         fontWeight: FontWeight.w600,
                         fontSize: 20),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
                   TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Login',
+                    enableSuggestions: false,
+                    controller: _textEditingController1,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
                       // errorText: 'Error message',
-                      enabledBorder: const OutlineInputBorder(
+                      enabledBorder: OutlineInputBorder(
                           // width: 0.0 produces a thin "hairline" border
                           // borderSide: const BorderSide(color: Colors.grey, width: 0.0),
                           ),
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       // labelStyle: new TextStyle(color: Colors.green),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 12.0,
                   ),
                   TextField(
+                    controller: _textEditingController2,
                     obscureText: true,
                     enableSuggestions: false,
                     autocorrect: false,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Password',
 
                       // errorText: 'Error message',
-                      enabledBorder: const OutlineInputBorder(
+                      enabledBorder: OutlineInputBorder(
                           // width: 0.0 produces a thin "hairline" border
                           // borderSide: const BorderSide(color: Colors.grey, width: 0.0),
                           ),
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       // labelStyle: new TextStyle(color: Colors.green),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   SignUpButton(
                     onTap: () async {
                       try {
                         var a = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                                email: "email", password: "password");
-                        if (a != null) {
-                          print("object");
-                        }
+                            .signInWithEmailAndPassword(
+                                email: _textEditingController1.text,
+                                password: _textEditingController2.text);
+                        Utils.pushReplacement(context, MainScreen());
                       } catch (e) {
-                        Utils.showAppDialog(context, Text("sdkfnsdkjf"));
+                        Utils.showAppDialog(context, Text(e.toString()));
                       }
                     },
                     text: 'Continue',
-                  )
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Don't have an account?"),
+                      TextButton(
+                          onPressed: () =>
+                              Utils.pushReplacement(context, SignUpScreen()),
+                          child: Text("Sign Up")),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
                 ],
               ),
             )));

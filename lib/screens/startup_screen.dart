@@ -1,4 +1,5 @@
 import 'package:diplomayin/constants/constants.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class StartupScreen extends StatefulWidget {
@@ -14,8 +15,7 @@ class _StartupScreenState extends State<StartupScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(kTabScrollDuration)
-          .whenComplete(() => widget.onComplete(context));
+      Firebase.initializeApp().whenComplete(() => widget.onComplete(context));
     });
   }
 
