@@ -1,16 +1,45 @@
 import 'package:diplomayin/constants/constants.dart';
 import 'package:diplomayin/screens/home_screen.dart';
+import 'package:diplomayin/screens/login_screen.dart';
 import 'package:diplomayin/screens/main_screen.dart';
 import 'package:diplomayin/screens/onboarding_screen.dart';
 import 'package:diplomayin/screens/startup_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
+import 'package:diplomayin/widget/doc_item_widget.dart';
 import 'package:diplomayin/widget/scan_item_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 GetIt getIt = GetIt.instance;
+bool shouldUseFirebaseEmulator = false;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    await Firebase.initializeApp();
+  } else {
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: 'AIzaSyAgUhHU8wSJgO5MVNy95tMT07NEjzMOfz0',
+        appId: '1:448618578101:web:0b650370bb29e29cac3efc',
+        messagingSenderId: '448618578101',
+        projectId: 'react-native-firebase-testing',
+        authDomain: 'react-native-firebase-testing.firebaseapp.com',
+        databaseURL: 'https://react-native-firebase-testing.firebaseio.com',
+        storageBucket: 'react-native-firebase-testing.appspot.com',
+        measurementId: 'G-F79DJ0VFGS',
+      ),
+    );
+  }
 
-void main() {
+  if (shouldUseFirebaseEmulator) {
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  }
+
   runApp(const MyApp());
 }
 
@@ -40,11 +69,15 @@ class _MyAppState extends State<MyApp> {
                 titleTextStyle: TextStyle(
                     fontFamily: Constants.appBarFontFamily,
                     fontSize: Constants.appBarFontSize))),
-        home:
-            //MainScreen(tabBarViews: _tabViews, tabs: _tabs) //
-            const HomeScreen());
+        home: StartupScreen(
+            onComplete: (context) =>
+                Utils.pushReplacement(context,  MainScreen()))
+        // MainScreen(tabBarViews: _tabViews, tabs: _tabs) //
+        // const HomeScreen()
+
+        );
   }
-/*
+
   List<Widget> get _tabViews => [
         Utils.refreshWidget(GlobalKey(), () async {
 //TODO
@@ -68,47 +101,32 @@ class _MyAppState extends State<MyApp> {
         Utils.refreshWidget(GlobalKey(), () async {
 //TODO
         },
-            Utils.gridWidget(
+            Utils.listViewWidget(
               <Widget>[
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
+                DocItemWidget(),
+                DocItemWidget(),
+                DocItemWidget(),
+                DocItemWidget(),
+                DocItemWidget(),
+                DocItemWidget(),
+                DocItemWidget(),
+                DocItemWidget(),
+                DocItemWidget(),
               ],
             )),
-        Utils.refreshWidget(GlobalKey(), () async {
-//TODO
-        },
-            Utils.gridWidget(
-              <Widget>[
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-              ],
-            ))
       ];
   List<Widget> get _tabs => [
         _tabBarTitle("Scans"),
         _tabBarTitle("Documents"),
-        _tabBarTitle("Favorites")
       ];
 
-  Widget _tabBarTitle(String title) => Text(title,
-      style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white));
-*/
+  Widget _tabBarTitle(String title) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(title,
+            style: const TextStyle(
+                fontWeight: FontWeight.w500, color: Colors.white)),
+      );
+
   // StartupScreen(
   //   onComplete: (context) =>
   //       Utils.pushReplacement(context, const OnboardingScreen()),
