@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:diplomayin/view_models/scan_view_model.dart';
 import 'package:flutter/material.dart';
 
@@ -11,11 +13,11 @@ class DocItemWidget extends StatelessWidget {
     return ListTile(
       leading: Image.asset('assets/images/documents.png'),
       title: Text(
-        'Three-line ListTile',
+        Random().nextInt(1000000).toString() + '.txt',
         style: TextStyle(
-            color: Colors.black87, fontWeight: FontWeight.w500, fontSize: 12.0),
+            color: Colors.black87, fontWeight: FontWeight.w500, fontSize: 16.0),
       ),
-      subtitle: Text('A sufficiently long subtitle warrants three lines.',
+      subtitle: Text('03/05/2022',
           style: TextStyle(
               color: Colors.black87,
               fontWeight: FontWeight.w400,

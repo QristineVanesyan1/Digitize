@@ -84,11 +84,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   SignUpButton(
                     onTap: () async {
                       try {
-                        var a = await FirebaseAuth.instance
+                       await FirebaseAuth.instance
                             .signInWithEmailAndPassword(
                                 email: _textEditingController1.text,
                                 password: _textEditingController2.text);
-                        Utils.pushReplacement(context, MainScreen());
+                         Utils.pushReplacement(context, MainScreen());
                       } catch (e) {
                         Utils.showAppDialog(context, Text(e.toString()));
                       }

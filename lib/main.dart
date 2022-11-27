@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
                     fontSize: Constants.appBarFontSize))),
         home: StartupScreen(
             onComplete: (context) =>
-                Utils.pushReplacement(context, const LoginScreen()))
+                Utils.pushReplacement(context,  MainScreen()))
         // MainScreen(tabBarViews: _tabViews, tabs: _tabs) //
         // const HomeScreen()
 
