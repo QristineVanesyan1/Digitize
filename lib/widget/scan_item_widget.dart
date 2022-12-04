@@ -1,4 +1,3 @@
-import 'package:diplomayin/view_models/scan_view_model.dart';
 import 'package:flutter/material.dart';
 
 class ScanItemWidget extends StatelessWidget {

@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class StartupScreen extends StatefulWidget {
-  const StartupScreen({required this.onComplete, Key? key}) : super(key: key);
-  final Function(BuildContext context) onComplete;
+  const StartupScreen({this.onComplete, Key? key}) : super(key: key);
+  final Function(BuildContext context)? onComplete;
 
   @override
   State<StartupScreen> createState() => _StartupScreenState();
@@ -15,7 +15,10 @@ class _StartupScreenState extends State<StartupScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Firebase.initializeApp().whenComplete(() => widget.onComplete(context));
+      if (widget.onComplete != null) {
+        Firebase.initializeApp()
+            .whenComplete(() => widget.onComplete?.call(context));
+      }
     });
   }
 

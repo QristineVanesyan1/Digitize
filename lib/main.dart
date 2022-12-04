@@ -1,50 +1,20 @@
-import 'package:diplomayin/constants/constants.dart';
-import 'package:diplomayin/screens/home_screen.dart';
 import 'package:diplomayin/screens/login_screen.dart';
 import 'package:diplomayin/screens/main_screen.dart';
-import 'package:diplomayin/screens/onboarding_screen.dart';
-import 'package:diplomayin/screens/startup_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
-import 'package:diplomayin/widget/doc_item_widget.dart';
-import 'package:diplomayin/widget/scan_item_widget.dart';
+import 'package:diplomayin/widget/app_error_widget.dart';
+import 'package:diplomayin/widget/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
-GetIt getIt = GetIt.instance;
-bool shouldUseFirebaseEmulator = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb) {
-    await Firebase.initializeApp();
-  } else {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: 'AIzaSyAgUhHU8wSJgO5MVNy95tMT07NEjzMOfz0',
-        appId: '1:448618578101:web:0b650370bb29e29cac3efc',
-        messagingSenderId: '448618578101',
-        projectId: 'react-native-firebase-testing',
-        authDomain: 'react-native-firebase-testing.firebaseapp.com',
-        databaseURL: 'https://react-native-firebase-testing.firebaseio.com',
-        storageBucket: 'react-native-firebase-testing.appspot.com',
-        measurementId: 'G-F79DJ0VFGS',
-      ),
-    );
-  }
-
-  if (shouldUseFirebaseEmulator) {
-    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  }
-
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -55,80 +25,129 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            primarySwatch: Colors.lightBlue,
-            backgroundColor: Colors.white,
-            fontFamily: Constants.appFontFamily,
-            textTheme: const TextTheme(
-                headline1: TextStyle(
-                    color: Colors.white,
-                    fontFamily: Constants.appBarFontFamily,
-                    fontSize: 40.0)),
-            appBarTheme: const AppBarTheme(
-                foregroundColor: Colors.white,
-                titleTextStyle: TextStyle(
-                    fontFamily: Constants.appBarFontFamily,
-                    fontSize: Constants.appBarFontSize))),
-        home: StartupScreen(
-            onComplete: (context) =>
-                Utils.pushReplacement(context,  MainScreen()))
-        // MainScreen(tabBarViews: _tabViews, tabs: _tabs) //
-        // const HomeScreen()
+        theme: Utils.getTheme(),
+        home: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              print("object");
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const WaitingScreen();
+              }
+              if (snapshot.hasData) {
+                final User? user = snapshot.data;
+                if (user != null) {
+                  if (user.emailVerified == false) {
+                    final user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {}
+                    return const VerifyScreen();
+                  } else {
+                    return MainScreen();
+                  }
+                }
+              }
+              return const LoginScreen();
+            }));
+  }
+}
 
-        );
+class WaitingScreen extends StatelessWidget {
+  const WaitingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: Utils.appBar(),
+      body: const Center(child: CircularProgressIndicator()),
+    );
+  }
+}
+
+class VerifyScreen extends StatefulWidget {
+  const VerifyScreen({super.key});
+
+  @override
+  State<VerifyScreen> createState() => _VerifyScreenState();
+}
+
+class _VerifyScreenState extends State<VerifyScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final firebase = FirebaseAuth.instance;
+      final user = firebase.currentUser;
+      if (user != null) {
+        if (!user.emailVerified) {
+          try {
+            user.sendEmailVerification();
+          } catch (e) {
+            Utils.showAppDialog(
+                context,
+                AppErrorWidget(
+                  message: e.toString(),
+                ));
+          }
+        }
+      }
+    });
   }
 
-  List<Widget> get _tabViews => [
-        Utils.refreshWidget(GlobalKey(), () async {
-//TODO
-        },
-            Utils.gridWidget(
-              <Widget>[
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-              ],
-            )),
-        Utils.refreshWidget(GlobalKey(), () async {
-//TODO
-        },
-            Utils.listViewWidget(
-              <Widget>[
-                DocItemWidget(),
-                DocItemWidget(),
-                DocItemWidget(),
-                DocItemWidget(),
-                DocItemWidget(),
-                DocItemWidget(),
-                DocItemWidget(),
-                DocItemWidget(),
-                DocItemWidget(),
-              ],
-            )),
-      ];
-  List<Widget> get _tabs => [
-        _tabBarTitle("Scans"),
-        _tabBarTitle("Documents"),
-      ];
-
-  Widget _tabBarTitle(String title) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(title,
-            style: const TextStyle(
-                fontWeight: FontWeight.w500, color: Colors.white)),
-      );
-
-  // StartupScreen(
-  //   onComplete: (context) =>
-  //       Utils.pushReplacement(context, const OnboardingScreen()),
-  // ));
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: Utils.appBar(),
+      body: SingleChildScrollView(
+          child: Column(
+        children: [
+          const SizedBox(
+            height: 40,
+          ),
+          const Text(
+            "Verify you Email",
+            style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Image.asset(
+            'assets/images/telegram.png',
+            width: 100,
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                "To confirm your email address, tap the button in the email we send you",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 50,
+          ),
+          Button(
+            onTap: () async {
+              try {
+                await FirebaseAuth.instance.signOut();
+              } catch (e) {
+                Utils.showAppDialog(
+                    context,
+                    AppErrorWidget(
+                      message: e.toString(),
+                    ));
+              }
+            },
+            text: 'GO BACK',
+          ),
+        ],
+      )),
+    );
+  }
 }

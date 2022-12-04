@@ -1,6 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:diplomayin/screens/home_screen.dart';
+import 'package:diplomayin/screens/sign_up_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
 import 'package:diplomayin/view_models/onboarding_screen_type.dart';
 import 'package:diplomayin/widget/button.dart';
@@ -33,7 +33,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Flexible(flex: 3, child: _renderPageView()),
+          Flexible(flex: 4, child: _renderPageView()),
           Flexible(
               flex: 1,
               child: Column(children: [
@@ -76,7 +76,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _renderBottomButton() {
     return Button(
-      onTap: () => Utils.pushReplacement(context, const HomeScreen()),
+      onTap: () => Utils.pushReplacement(context, SignUpScreen()),
       text: 'GET STARTED',
     );
   }

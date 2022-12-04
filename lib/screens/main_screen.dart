@@ -1,11 +1,11 @@
 import 'package:diplomayin/constants/constants.dart';
 import 'package:diplomayin/screens/home_screen.dart';
+import 'package:diplomayin/screens/sign_up_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
 import 'package:diplomayin/widget/doc_item_widget.dart';
+import 'package:diplomayin/widget/logout_button.dart';
 import 'package:diplomayin/widget/scan_item_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -82,8 +82,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         centerTitle: true,
         title: const Text(Constants.appTitle),
         bottom: TabBar(controller: _tabController, tabs: _tabs),
+        actions: const [LogoutButton()],
       ),
-      body: TabBarView(controller: _tabController, children: _tabViews),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Utils.navigatorPush(context, const HomeScreen()),
         label: const Text(
@@ -93,6 +93,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         icon: const Icon(Icons.document_scanner_outlined),
         backgroundColor: Colors.yellow,
       ),
+      body: TabBarView(controller: _tabController, children: _tabViews),
     );
   }
 }

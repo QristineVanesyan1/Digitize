@@ -1,13 +1,10 @@
-import 'package:diplomayin/screens/home_screen.dart';
 import 'package:diplomayin/screens/main_screen.dart';
 import 'package:diplomayin/screens/sign_up_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
+import 'package:diplomayin/widget/app_error_widget.dart';
 import 'package:diplomayin/widget/option_button.dart';
-import 'package:diplomayin/widget/picker_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 100,
                   ),
                   const Text(
@@ -84,31 +81,41 @@ class _LoginScreenState extends State<LoginScreen> {
                   SignUpButton(
                     onTap: () async {
                       try {
-                       await FirebaseAuth.instance
-                            .signInWithEmailAndPassword(
-                                email: _textEditingController1.text,
-                                password: _textEditingController2.text);
-                         Utils.pushReplacement(context, MainScreen());
+                        final firebaseAuth = FirebaseAuth.instance;
+                        await firebaseAuth.signInWithEmailAndPassword(
+                            email: _textEditingController1.text,
+                            password: _textEditingController2.text);
+
+                        // final user = firebaseAuth.currentUser;
+                        // if (user != null) {
+                        //   if (!user.emailVerified) {
+                        //     await user.sendEmailVerification();
+                        //   }
+                        // }
                       } catch (e) {
-                        Utils.showAppDialog(context, Text(e.toString()));
+                        Utils.showAppDialog(
+                            context,
+                            AppErrorWidget(
+                              message: e.toString(),
+                            ));
                       }
                     },
                     text: 'Continue',
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Don't have an account?"),
+                      const Text("Don't have an account?"),
                       TextButton(
                           onPressed: () =>
                               Utils.pushReplacement(context, SignUpScreen()),
-                          child: Text("Sign Up")),
+                          child: const Text("Sign Up")),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                 ],

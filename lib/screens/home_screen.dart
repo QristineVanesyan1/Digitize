@@ -4,6 +4,7 @@ import 'package:diplomayin/constants/constants.dart';
 import 'package:diplomayin/repository/db_repository.dart';
 import 'package:diplomayin/repository/ocr_repository.dart';
 import 'package:diplomayin/screens/details_screen.dart';
+import 'package:diplomayin/screens/sign_up_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
 import 'package:diplomayin/view_models/ocr_view_model.dart';
 import 'package:diplomayin/widget/app_error_widget.dart';
@@ -32,38 +33,38 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Utils.appBar(),
-      body: Center(
+        appBar: Utils.appBar(),
+        body: Center(
           child: SingleChildScrollView(
-        child: Container(
-            margin: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      if (textScanning) const CircularProgressIndicator(),
-                      if (!textScanning && imageFile == null)
-                        Container(
-                          width: 300,
-                          height: 300,
-                          color: Colors.grey[300]!,
-                        ),
-                    ]),
-                if (imageFile != null) Image.file(File(imageFile!.path)),
-                _renderButtons(),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  scannedText ?? '',
-                  style: const TextStyle(fontSize: 20),
-                ),
-              ],
-            )),
-      )),
-    );
+            child: Container(
+                margin: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (textScanning) const CircularProgressIndicator(),
+                          if (!textScanning && imageFile == null)
+                            Container(
+                              width: 300,
+                              height: 300,
+                              color: Colors.grey[300]!,
+                            ),
+                        ]),
+                    if (imageFile != null) Image.file(File(imageFile!.path)),
+                    _renderButtons(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      scannedText ?? '',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ],
+                )),
+          ),
+        ));
   }
 
   Widget _renderButtons() =>
@@ -147,6 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _onSaveTxt() async {}
   Future<void> _onSeeResult() async {
-    Utils.navigatorPush(context, DetailsScreen());
+    Utils.navigatorPush(context, const DetailsScreen());
   }
 }
