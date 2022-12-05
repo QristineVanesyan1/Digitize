@@ -5,6 +5,21 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 abstract class Utils {
+  static ThemeData getTheme() => ThemeData(
+      primarySwatch: Colors.lightBlue,
+      backgroundColor: Colors.white,
+      fontFamily: Constants.appFontFamily,
+      textTheme: const TextTheme(
+          headline1: TextStyle(
+              color: Colors.white,
+              fontFamily: Constants.appBarFontFamily,
+              fontSize: 40.0)),
+      appBarTheme: const AppBarTheme(
+          foregroundColor: Colors.white,
+          titleTextStyle: TextStyle(
+              fontFamily: Constants.appBarFontFamily,
+              fontSize: Constants.appBarFontSize)));
+
   static String decodeBase64(String base64Txt) =>
       utf8.decode(base64.decode(base64Txt));
 

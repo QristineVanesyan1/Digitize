@@ -1,7 +1,9 @@
-import 'package:diplomayin/view_models/scan_view_model.dart';
+import 'package:diplomayin/models/a.dart';
 import 'package:flutter/material.dart';
 
 class ScanItemWidget extends StatelessWidget {
+  ScanItemWidget({required this.a});
+  final A a;
   // const ScanItemWidget({required this.scanViewModel, Key? key})
   //     : super(key: key);
   // final ScanViewModel scanViewModel;
@@ -28,7 +30,7 @@ class ScanItemWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "IMG_565465456",
+                      a.file,
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,

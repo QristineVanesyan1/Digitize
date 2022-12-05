@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:diplomayin/constants/constants.dart';
 import 'package:diplomayin/repository/db_repository.dart';
 import 'package:diplomayin/repository/ocr_repository.dart';
 import 'package:diplomayin/screens/details_screen.dart';
@@ -11,6 +10,7 @@ import 'package:diplomayin/widget/picker_button.dart';
 import 'package:diplomayin/widget/save_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -32,38 +32,38 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Utils.appBar(),
-      body: Center(
+        appBar: Utils.appBar(),
+        body: Center(
           child: SingleChildScrollView(
-        child: Container(
-            margin: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      if (textScanning) const CircularProgressIndicator(),
-                      if (!textScanning && imageFile == null)
-                        Container(
-                          width: 300,
-                          height: 300,
-                          color: Colors.grey[300]!,
-                        ),
-                    ]),
-                if (imageFile != null) Image.file(File(imageFile!.path)),
-                _renderButtons(),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  scannedText ?? '',
-                  style: const TextStyle(fontSize: 20),
-                ),
-              ],
-            )),
-      )),
-    );
+            child: Container(
+                margin: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (textScanning) const CircularProgressIndicator(),
+                          if (!textScanning && imageFile == null)
+                            Container(
+                              width: 300,
+                              height: 300,
+                              color: Colors.grey[300]!,
+                            ),
+                        ]),
+                    if (imageFile != null) Image.file(File(imageFile!.path)),
+                    _renderButtons(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      scannedText ?? '',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ],
+                )),
+          ),
+        ));
   }
 
   Widget _renderButtons() =>
@@ -145,8 +145,60 @@ class _HomeScreenState extends State<HomeScreen> {
     // }
   }
 
-  Future<void> _onSaveTxt() async {}
+  Future<void> _onSaveTxt() async {
+    if (ocrViewModel != null) {
+      final ocr = ocrViewModel!.model;
+       var data = await imageFile!.readAsBytes();
+      try {
+        final directory = await getApplicationDocumentsDirectory();
+        final jsonPath = '${directory.path}/json_${ocr.id}.txt';
+        final filePath = '${directory.path}/file_${ocr.id}.txt';
+        final imagePath = '${directory.path}/image_${ocr.id}.jpg';
+
+        final filePathFile = File(filePath);
+        final jsonPathFile = File(jsonPath);
+        final imagePathFile = File(imagePath);
+        final textList = ocrViewModel!.recognizedText;
+        String content = '';
+        for (var text in textList) {
+          content += text.toString();
+        }
+        if (content != '') {
+          await filePathFile.writeAsString(content);
+          await imagePathFile.writeAsBytes(data);
+            await jsonPathFile.writeAsString(ocr.toJson().toString());
+
+          await DbRepository.getDb();
+          await DbRepository().insertData(
+              jsonPath: jsonPath, filePath: filePath, imagePath: imagePath);
+          Utils.showAppDialog(
+              context, const AppErrorWidget(message: 'GRVELA BALIK'));
+
+          // await imagePathFile.writeAsBytes(data);
+        } else {
+          Utils.showAppDialog(
+              context, const AppErrorWidget(message: 'Empty Content'));
+        }
+      } catch (e) {
+        Utils.showAppDialog(context, const AppErrorWidget());
+      }
+    } else {
+      Utils.showAppDialog(context, const AppErrorWidget());
+    }
+  }
+
   Future<void> _onSeeResult() async {
-    Utils.navigatorPush(context, DetailsScreen());
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
+
+    if (ocrViewModel != null) {
+      Utils.navigatorPush(
+          context,
+          DetailsScreen(
+            result: ocrViewModel!,
+          ));
+    } else {
+      Utils.showAppDialog(context, const AppErrorWidget());
+    }
   }
 }
