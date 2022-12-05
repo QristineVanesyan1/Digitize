@@ -7,9 +7,9 @@ class DbRepository {
   static Database? database;
   static String table = 'ocr';
   static String columnId = 'id';
-  static String path = 'path';
-  static String isFavorite = 'is_favorite';
+  static String json = 'json';
   static String image = 'image';
+  static String file = 'file';
   static String timestamp = 'timestamp';
   static Future<Database?> getDb() async {
     database ??= await openDB();
@@ -22,9 +22,9 @@ class DbRepository {
       await db.execute('''
         create table $table ( 
           $columnId integer primary key autoincrement, 
-          $path text not null,
-          $image text not null,
-          $isFavorite boolean not null,
+          $file text,
+          $json text not null,
+          $image text,
           $timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)
         ''');
     });
@@ -34,9 +34,15 @@ class DbRepository {
     await database.close();
   }
 
-  Future<void> insertData(String filePath, String imagePath) async {
-    await database?.insert(table,
-        {columnId: null, path: filePath, image: imagePath, timestamp: null});
+  Future<void> insertData(
+      {String? jsonPath, String? filePath, String? imagePath}) async {
+    await database?.insert(table, {
+      "\"$columnId\"": null,
+      "\"$json\"": "\"$jsonPath\"",
+      "\"$file\"": "\"$filePath\"",
+      "\"$image\"": "\"$imagePath\"",
+      "\"$timestamp\"": null
+    });
   }
 
   Future<List<Map<String, Object?>>> getData() async {

@@ -1,6 +1,7 @@
 import 'package:diplomayin/constants/constants.dart';
+import 'package:diplomayin/models/a.dart';
+import 'package:diplomayin/repository/db_repository.dart';
 import 'package:diplomayin/screens/home_screen.dart';
-import 'package:diplomayin/screens/sign_up_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
 import 'package:diplomayin/widget/doc_item_widget.dart';
 import 'package:diplomayin/widget/logout_button.dart';
@@ -13,25 +14,17 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+  var list = [];
   List<Widget> get _tabViews => [
         Utils.refreshWidget(GlobalKey(), () async {
 //TODO
         },
             Utils.gridWidget(
-              <Widget>[
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-                ScanItemWidget(),
-              ],
+              List.generate(
+                  list.length,
+                  (index) => ScanItemWidget(
+                        a: list[index],
+                      )),
             )),
         Utils.refreshWidget(GlobalKey(), () async {
 //TODO
@@ -78,22 +71,39 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(Constants.appTitle),
-        bottom: TabBar(controller: _tabController, tabs: _tabs),
-        actions: const [LogoutButton()],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Utils.navigatorPush(context, const HomeScreen()),
-        label: const Text(
-          'SCAN',
-          style: TextStyle(fontWeight: FontWeight.w600),
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text(Constants.appTitle),
+          bottom: TabBar(controller: _tabController, tabs: _tabs),
+          actions: const [LogoutButton()],
         ),
-        icon: const Icon(Icons.document_scanner_outlined),
-        backgroundColor: Colors.yellow,
-      ),
-      body: TabBarView(controller: _tabController, children: _tabViews),
-    );
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => Utils.navigatorPush(context, const HomeScreen()),
+          label: const Text(
+            'SCAN',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          icon: const Icon(Icons.document_scanner_outlined),
+          backgroundColor: Colors.yellow,
+        ),
+        body: FutureBuilder(
+          future: _future(),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            return TabBarView(controller: _tabController, children: _tabViews);
+          },
+        ));
+  }
+
+  Future<ConnectionState> _future() async {
+    DbRepository db = DbRepository();
+    await DbRepository.getDb();
+    final data = await db.getData();
+    data.forEach((e) {
+      print(e);
+      final b = A.toJson(e);
+      list.add(b);
+    });
+
+    return ConnectionState.done;
   }
 }
