@@ -32,7 +32,7 @@ migrate_working_dir/
 .pub/
 /build/
 .env
-lib/env
+lib/env/env.g.dart
 
 # Web related
 lib/generated_plugin_registrant.dart
