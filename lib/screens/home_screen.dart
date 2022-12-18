@@ -142,9 +142,9 @@ class _HomeScreenState extends State<HomeScreen> {
     Utils.showAppBottomSheet(
         context,
         SaveWidget(
-          onSave: () async => await _onSave(),
-          onSaveTxt: () async => await _onSaveTxt(),
-          onSeeResult: () async => await _onSeeResult(),
+          onSave: _onSave,
+          onSaveTxt: _onSaveTxt,
+          onSeeResult: _onSeeResult,
         ));
   }
 
@@ -157,11 +157,50 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _onSave() async {
-    print("TODDO");
+  Future<void> _onSaveTxt() async {
+    if (ocrViewModel != null) {
+      final ocr = ocrViewModel!.model;
+      try {
+        final directory = await getApplicationDocumentsDirectory();
+        final jsonPath = '${directory.path}/json_${ocr.id}.txt';
+        final filePath = '${directory.path}/file_${ocr.id}.txt';
+
+        final filePathFile = File(filePath);
+        final jsonPathFile = File(jsonPath);
+        final textList = ocrViewModel!.recognizedText;
+        String content = '';
+        for (var text in textList) {
+          content += text.toString();
+        }
+        if (content != '') {
+          await filePathFile.writeAsString(content);
+          await jsonPathFile.writeAsString(ocr.toJson().toString());
+
+          await DbRepository.getDb();
+          await DbRepository()
+              .insertDataTxt(jsonPathTxt: jsonPath, filePathTxt: filePath);
+          // ignore: use_build_context_synchronously
+          Utils.showAppDialog(
+              context,
+              AppErrorWidget(
+                  message: 'File successfully saved',
+                  onConfirm: (context) {
+                    Navigator.of(context).pop(true);
+                  }));
+        } else {
+          // ignore: use_build_context_synchronously
+          Utils.showAppDialog(
+              context, const AppErrorWidget(message: 'Empty Content'));
+        }
+      } catch (e) {
+        Utils.showAppDialog(context, const AppErrorWidget());
+      }
+    } else {
+      Utils.showAppDialog(context, const AppErrorWidget());
+    }
   }
 
-  Future<void> _onSaveTxt() async {
+  Future<void> _onSave() async {
     if (ocrViewModel != null) {
       final ocr = ocrViewModel!.model;
       var data = await imageFile!.readAsBytes();
@@ -188,7 +227,12 @@ class _HomeScreenState extends State<HomeScreen> {
           await DbRepository().insertData(
               jsonPath: jsonPath, filePath: filePath, imagePath: imagePath);
           Utils.showAppDialog(
-              context, const AppErrorWidget(message: 'GRVELA BALIK'));
+              context,
+              AppErrorWidget(
+                  message: 'File successfully saved',
+                  onConfirm: (context) {
+                    Navigator.of(context).pop(true);
+                  }));
 
           // await imagePathFile.writeAsBytes(data);
         } else {

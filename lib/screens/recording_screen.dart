@@ -35,7 +35,6 @@ class _RecordingScreenState extends State<RecordingScreen> {
               if (state is StoppedState) {
                 if (state.isSend == true) {
                   var a = state.audioFile;
-                  
                 }
               }
             }), child: BlocBuilder<RecordingBloc, RecordingState>(
@@ -57,12 +56,18 @@ class _RecordingScreenState extends State<RecordingScreen> {
                         ? Container(
                             height: 100,
                             width: 100,
-                            color: Colors.lightBlueAccent,
+                            child: const Icon(
+                              Icons.stop,
+                              color: Colors.black87,
+                            ),
                           )
                         : Container(
                             height: 100,
                             width: 100,
-                            color: Colors.red,
+                            child: const Icon(
+                              Icons.play_arrow,
+                              color: Colors.black87,
+                            ),
                           ),
                   )
                 ],

@@ -11,6 +11,13 @@ class DbRepository {
   static String image = 'image';
   static String file = 'file';
   static String timestamp = 'timestamp';
+
+  static String tableTxt = 'ocrTxt';
+  static String columnIdTxt = 'idTxt';
+  static String jsonTxt = 'jsonTxt';
+  static String fileTxt = 'fileTxt';
+  static String timestampTxt = 'timestampTxt';
+
   static Future<Database?> getDb() async {
     database ??= await openDB();
     return database;
@@ -26,6 +33,14 @@ class DbRepository {
           $json text not null,
           $image text,
           $timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)
+        ''');
+
+      await db.execute('''
+        create table $tableTxt ( 
+          $columnIdTxt integer primary key autoincrement, 
+          $fileTxt text,
+          $jsonTxt text not null,
+          $timestampTxt DATETIME DEFAULT CURRENT_TIMESTAMP)
         ''');
     });
   }
@@ -45,7 +60,20 @@ class DbRepository {
     });
   }
 
+  Future<void> insertDataTxt({String? jsonPathTxt, String? filePathTxt}) async {
+    await database?.insert(tableTxt, {
+      "\"$columnIdTxt\"": null,
+      "\"$jsonTxt\"": "\"$jsonPathTxt\"",
+      "\"$fileTxt\"": "\"$filePathTxt\"",
+      "\"$timestampTxt\"": null
+    });
+  }
+
   Future<List<Map<String, Object?>>> getData() async {
     return await database!.query(table);
+  }
+
+  Future<List<Map<String, Object?>>> getDataTxt() async {
+    return await database!.query(tableTxt);
   }
 }

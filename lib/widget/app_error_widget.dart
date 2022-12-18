@@ -1,10 +1,9 @@
-import 'package:diplomayin/screens/home_screen.dart';
-import 'package:diplomayin/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class AppErrorWidget extends StatelessWidget {
-  const AppErrorWidget({super.key, this.message});
+  const AppErrorWidget({super.key, this.message, this.onConfirm});
   final String? message;
+  final void Function(BuildContext)? onConfirm;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +19,10 @@ class AppErrorWidget extends StatelessWidget {
       actions: <Widget>[
         TextButton(
             child: const Text('OK'),
-            onPressed: () => Navigator.of(context).pop()),
+            onPressed: () {
+              Navigator.of(context).pop();
+              onConfirm?.call(context);
+            }),
       ],
     );
   }

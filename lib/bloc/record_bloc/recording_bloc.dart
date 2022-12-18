@@ -47,16 +47,18 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
       audioRecorder = Record();
       _cancel = false;
       record = true;
-      final isRecording = await audioRecorder?.isRecording();
-      if (isRecording == false) {
-        var tempDir = await getTemporaryDirectory();
-        final path =
-            '${tempDir.path}/AudioFile:${DateTime.now().toIso8601String()}.wav';
-        await audioRecorder?.start(path: path);
-        _path = path;
-        recordDuration = 0;
-        _startTimer();
-        emit(StartedState());
+      if (await audioRecorder!.hasPermission()) {
+        final isRecording = await audioRecorder?.isRecording();
+        if (isRecording == false) {
+          var tempDir = await getTemporaryDirectory();
+          final path =
+              '${tempDir.path}/AudioFile:${DateTime.now().toIso8601String()}.wav';
+          await audioRecorder?.start(path: path);
+          _path = path;
+          recordDuration = 0;
+          _startTimer();
+          emit(StartedState());
+        }
       }
     } catch (e) {
       emit(ErrorState());
