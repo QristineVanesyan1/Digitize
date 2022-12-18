@@ -205,6 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final ocr = ocrViewModel!.model;
       var data = await imageFile!.readAsBytes();
       try {
+        print(data);
         final directory = await getApplicationDocumentsDirectory();
         final jsonPath = '${directory.path}/json_${ocr.id}.txt';
         final filePath = '${directory.path}/file_${ocr.id}.txt';

@@ -2,12 +2,9 @@ import 'package:diplomayin/models/scan_item_view_model.dart';
 import 'package:flutter/material.dart';
 
 class ScanItemWidget extends StatelessWidget {
-  ScanItemWidget({required this.scanItemViewModel, this.onCardPressed});
-  ScanItemViewModel scanItemViewModel;
+  const ScanItemWidget({required this.scanItemViewModel, this.onCardPressed});
+  final ScanItemViewModel scanItemViewModel;
   final VoidCallback? onCardPressed;
-  // const ScanItemWidget({required this.scanViewModel, Key? key})
-  //     : super(key: key);
-  // final ScanViewModel scanViewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +18,7 @@ class ScanItemWidget extends StatelessWidget {
                   border: Border.all(width: 1, color: Colors.grey),
                   borderRadius: BorderRadius.all(Radius.circular(8.0))),
               padding: const EdgeInsets.all(8),
-              child: Image.asset("assets/images/text.png"),
+              child: Image.asset(scanItemViewModel.image),
             ),
           ),
           Align(

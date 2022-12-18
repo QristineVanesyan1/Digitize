@@ -53,9 +53,9 @@ class DbRepository {
       {String? jsonPath, String? filePath, String? imagePath}) async {
     await database?.insert(table, {
       "\"$columnId\"": null,
-      "\"$json\"": "\"$jsonPath\"",
-      "\"$file\"": "\"$filePath\"",
-      "\"$image\"": "\"$imagePath\"",
+      "\"$json\"": "$jsonPath",
+      "\"$file\"": "$filePath",
+      "\"$image\"": "$imagePath",
       "\"$timestamp\"": null
     });
   }
@@ -63,8 +63,8 @@ class DbRepository {
   Future<void> insertDataTxt({String? jsonPathTxt, String? filePathTxt}) async {
     await database?.insert(tableTxt, {
       "\"$columnIdTxt\"": null,
-      "\"$jsonTxt\"": "\"$jsonPathTxt\"",
-      "\"$fileTxt\"": "\"$filePathTxt\"",
+      "\"$jsonTxt\"": "$jsonPathTxt",
+      "\"$fileTxt\"": "$filePathTxt",
       "\"$timestampTxt\"": null
     });
   }
