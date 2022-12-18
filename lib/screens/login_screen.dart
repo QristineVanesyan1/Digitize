@@ -1,4 +1,3 @@
-import 'package:diplomayin/screens/main_screen.dart';
 import 'package:diplomayin/screens/sign_up_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
 import 'package:diplomayin/widget/app_error_widget.dart';
