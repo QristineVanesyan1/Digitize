@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:diplomayin/constants/constants.dart';
 import 'package:diplomayin/repository/db_repository.dart';
 import 'package:diplomayin/repository/ocr_repository.dart';
 import 'package:diplomayin/screens/details_screen.dart';
@@ -32,7 +33,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: Utils.appBar(),
+        //TODO: REF
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text(Constants.appTitle),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.of(context)
+                .pop(true), //TODO check if something was changes
+          ),
+          actions: [_SaveButton(onTap: _onSavePressed)],
+        ),
         body: Center(
           child: SingleChildScrollView(
             child: Container(
@@ -90,6 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       textScanning = false;
       imageFile = null;
+      Utils.showAppDialog(
+          context, const AppErrorWidget(message: 'Please check permission'));
       setState(() {});
     }
   }
@@ -135,20 +148,23 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 
+  Future<void> _onSavePressed() async {
+    if (ocrViewModel != null) {
+      _show(ocrViewModel!);
+    } else {
+      Utils.showAppDialog(
+          context, const AppErrorWidget(message: 'Select Image'));
+    }
+  }
+
   Future<void> _onSave() async {
-    print(ocrViewModel!.model.toJson());
-
-    // if (ocrViewModel != null) {
-
-    //   var a = await dbRepository.getData();
-    //   print(a);
-    // }
+    print("TODDO");
   }
 
   Future<void> _onSaveTxt() async {
     if (ocrViewModel != null) {
       final ocr = ocrViewModel!.model;
-       var data = await imageFile!.readAsBytes();
+      var data = await imageFile!.readAsBytes();
       try {
         final directory = await getApplicationDocumentsDirectory();
         final jsonPath = '${directory.path}/json_${ocr.id}.txt';
@@ -166,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (content != '') {
           await filePathFile.writeAsString(content);
           await imagePathFile.writeAsBytes(data);
-            await jsonPathFile.writeAsString(ocr.toJson().toString());
+          await jsonPathFile.writeAsString(ocr.toJson().toString());
 
           await DbRepository.getDb();
           await DbRepository().insertData(
@@ -200,5 +216,17 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       Utils.showAppDialog(context, const AppErrorWidget());
     }
+  }
+}
+
+class _SaveButton extends StatelessWidget {
+  const _SaveButton({this.onTap});
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        icon: const Icon(Icons.save, color: Colors.white),
+        onPressed: () => onTap?.call());
   }
 }

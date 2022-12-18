@@ -1,5 +1,5 @@
 import 'package:diplomayin/constants/constants.dart';
-import 'package:diplomayin/models/a.dart';
+import 'package:diplomayin/models/scan_item_view_model.dart';
 import 'package:diplomayin/repository/db_repository.dart';
 import 'package:diplomayin/screens/home_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
@@ -15,18 +15,25 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   var list = [];
+  var scansRefreshKey = GlobalKey<RefreshIndicatorState>();
+  var docsRefreshKey = GlobalKey<RefreshIndicatorState>();
+
   List<Widget> get _tabViews => [
-        Utils.refreshWidget(GlobalKey(), () async {
-//TODO
+        Utils.refreshWidget(scansRefreshKey, () async {
+          scansRefreshKey.currentState?.show();
+          await _fetchScannedFiles();
+          setState(() {});
         },
-            Utils.gridWidget(
-              List.generate(
-                  list.length,
-                  (index) => ScanItemWidget(
-                        a: list[index],
-                      )),
-            )),
-        Utils.refreshWidget(GlobalKey(), () async {
+            list.isEmpty
+                ? const EmptyList()
+                : Utils.gridWidget(
+                    List.generate(
+                        list.length,
+                        (index) => ScanItemWidget(
+                              scanItemViewModel: list[index],
+                            )),
+                  )),
+        Utils.refreshWidget(docsRefreshKey, () async {
 //TODO
         },
             Utils.listViewWidget(
@@ -77,33 +84,64 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           bottom: TabBar(controller: _tabController, tabs: _tabs),
           actions: const [LogoutButton()],
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => Utils.navigatorPush(context, const HomeScreen()),
-          label: const Text(
-            'SCAN',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          icon: const Icon(Icons.document_scanner_outlined),
-          backgroundColor: Colors.yellow,
-        ),
+        floatingActionButton: _ScanButton(onTap: _onScanTap),
         body: FutureBuilder(
-          future: _future(),
+          future: _fetchScannedFiles(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             return TabBarView(controller: _tabController, children: _tabViews);
           },
         ));
   }
 
-  Future<ConnectionState> _future() async {
+  Future<void> _onScanTap() async {
+    bool? isRefresh = await Utils.navigatorPush(context, const HomeScreen());
+    if (isRefresh != null && isRefresh == true) {
+      await _fetchScannedFiles();
+      setState(() {});
+    }
+  }
+
+  Future<ConnectionState> _fetchScannedFiles() async {
     DbRepository db = DbRepository();
     await DbRepository.getDb();
     final data = await db.getData();
-    data.forEach((e) {
-      print(e);
-      final b = A.toJson(e);
-      list.add(b);
-    });
-
+    var tempList = [];
+    // TODO optimize after MVP1 :D
+    for (var e in data) {
+      tempList.add(ScanItemViewModel.toJson(e));
+    }
+    list = tempList;
     return ConnectionState.done;
+  }
+}
+
+class EmptyList extends StatelessWidget {
+  const EmptyList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+        child: Text(
+      'No result',
+      style: TextStyle(color: Colors.grey, fontSize: 18.0),
+    ));
+  }
+}
+
+class _ScanButton extends StatelessWidget {
+  const _ScanButton({this.onTap});
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: () => onTap?.call(),
+      label: const Text(
+        'SCAN',
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
+      icon: const Icon(Icons.document_scanner_outlined),
+      backgroundColor: Colors.yellow,
+    );
   }
 }

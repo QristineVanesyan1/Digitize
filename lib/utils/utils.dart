@@ -28,8 +28,9 @@ abstract class Utils {
         MaterialPageRoute(builder: (context) => screen),
       );
 
-  static void navigatorPush(BuildContext context, Widget screen) =>
-      Navigator.of(context).push(
+  static Future<dynamic> navigatorPush(
+          BuildContext context, Widget screen) async =>
+      await Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => screen),
       );
 
@@ -65,6 +66,7 @@ abstract class Utils {
       RefreshIndicator(key: key, onRefresh: onRefresh, child: child);
 
   static Widget gridWidget(List<Widget> children) => GridView.count(
+      physics: const AlwaysScrollableScrollPhysics(),
       primary: false,
       padding: const EdgeInsets.all(20),
       crossAxisSpacing: 10,

@@ -1,10 +1,10 @@
-class A {
+class ScanItemViewModel {
   final int id;
   final String file;
   final String image;
   final String json;
   final String? timestamp;
-  A({
+  ScanItemViewModel({
     required this.id,
     required this.file,
     required this.image,
@@ -12,7 +12,8 @@ class A {
     required this.timestamp,
   });
 
-  factory A.toJson(Map<String, dynamic> json) => A(
+  factory ScanItemViewModel.toJson(Map<String, dynamic> json) =>
+      ScanItemViewModel(
         id: json['id'] as int,
         file: json['file'] as String,
         image: json['image'] as String,
