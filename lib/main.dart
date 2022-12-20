@@ -1,6 +1,5 @@
 import 'package:diplomayin/screens/login_screen.dart';
 import 'package:diplomayin/screens/main_screen.dart';
-import 'package:diplomayin/screens/recording_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
 import 'package:diplomayin/widget/app_error_widget.dart';
 import 'package:diplomayin/widget/button.dart';
@@ -30,7 +29,6 @@ class _MyAppState extends State<MyApp> {
         home: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
-              print("object");
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const WaitingScreen();
               }

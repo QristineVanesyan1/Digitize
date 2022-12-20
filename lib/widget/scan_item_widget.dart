@@ -36,7 +36,7 @@ class ScanItemWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        scanItemViewModel.file,
+                        scanItemViewModel.title ?? 'N/A',
                         maxLines: 1,
                         style: const TextStyle(
                             color: Colors.white,

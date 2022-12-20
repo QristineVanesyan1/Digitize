@@ -108,8 +108,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _onTextRecognition() async {
-    bool? isRefresh =
-        await Utils.navigatorPush(context, const RecordingScreen());
+    bool? isRefresh = await Utils.navigatorPush(context, RecordingScreen());
     if (isRefresh != null && isRefresh == true) {
       await _fetchScannedFiles();
       setState(() {});

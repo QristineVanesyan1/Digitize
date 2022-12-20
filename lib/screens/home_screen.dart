@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final directory = await getApplicationDocumentsDirectory();
         final jsonPath = '${directory.path}/json_${ocr.id}.txt';
         final filePath = '${directory.path}/file_${ocr.id}.txt';
-        final imagePath = '${directory.path}/image_${ocr.id}.jpg';
+        final imagePath = '${directory.path}/image_${ocr.id}.png';
 
         final filePathFile = File(filePath);
         final jsonPathFile = File(jsonPath);

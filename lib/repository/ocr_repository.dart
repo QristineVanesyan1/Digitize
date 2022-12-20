@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:diplomayin/models/ocr.dart';
 import 'package:diplomayin/repository/db_repository.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
 class OCRRepository {
   OCRRepository({required this.dbRepository});
