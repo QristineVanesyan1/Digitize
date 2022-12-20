@@ -1,5 +1,12 @@
+import 'dart:io';
+
+import 'package:diplomayin/constants/constants.dart';
+import 'package:diplomayin/repository/db_repository.dart';
 import 'package:diplomayin/utils/utils.dart';
+import 'package:diplomayin/widget/app_error_widget.dart';
+import 'package:diplomayin/widget/save_button.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -45,7 +52,18 @@ class _RecordingScreenState extends State<RecordingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Utils.appBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text(Constants.appTitle),
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              _stopListening();
+              Navigator.of(context).pop(true);
+            } //TODO check if something was changes
+            ),
+        actions: [SaveButton(onTap: _onSavePressed)],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -80,5 +98,33 @@ class _RecordingScreenState extends State<RecordingScreen> {
             color: Colors.white),
       ),
     );
+  }
+
+  void _onSavePressed() async {
+    try {
+      _stopListening();
+      final directory = await getApplicationDocumentsDirectory();
+      final a = '/speechToText_${DateTime.now().toString()}.txt';
+      final speechToTextPath = '${directory.path}${a}';
+      final filePathFile = File(speechToTextPath);
+      if (_lastWords.isNotEmpty) {
+        await filePathFile.writeAsString(_lastWords);
+      }
+      await DbRepository.getDb();
+      await DbRepository()
+          .insertDataTxt(jsonPathTxt: a, filePathTxt: a, titleStr: a);
+
+      // ignore: use_build_context_synchronously
+
+      Utils.showAppDialog(
+          context,
+          AppErrorWidget(
+              message: 'File successfully saved',
+              onConfirm: (context) {
+                Navigator.of(context).pop(true);
+              }));
+    } catch (e) {
+      Utils.showAppDialog(context, const AppErrorWidget());
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:diplomayin/models/ocr.dart';
 import 'package:diplomayin/repository/db_repository.dart';
+import 'package:diplomayin/utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 
 class OCRRepository {
@@ -8,12 +9,11 @@ class OCRRepository {
   final DbRepository dbRepository;
 
   Future<OCR?> fetchOcr(XFile file) async {
-    var data = await file.readAsBytes();
-    var json =
-        '''{"status":"success","id":"ef057ca2-9606-4893-988d-38c004a3f7c6","documents":[{"id":"1189602","version":"1.2","type":"ocr","pages":[{"fileIdx":0,"offset":0,"count":1}],"categorizedUrl":"https://dkseun49-msqjdnsd.s3.eu-central-1.amazonaws.com/sdf/prod/users/4026/document/2022-11-19T18_56_17_681Z_c4cc55f4-3f5c-4648-90a1-3a1808ae9672_splitted.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAV3WNTZDYXELUKXI3%2F20221119%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20221119T000000Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&recognizingFinished=1668884187046&X-Amz-Signature=b8f625b1d9e7cddd1a3d1a94024701fc378720cbbf1a49ce21f7defd8166c74c","plainTextBase64":"IExJT04KICAgICAgICDCsAogICAgICAgICAg1YYKICAgICAgICAgICAgICAg1LnVvNW51bbVqyDUv9Wh1akK","validationChecks":{"result":0,"validations":{"recognitionStatusCheck":{"type":"boolean","value":true}}},"textAnnotation":{"Pages":[{"ClockwiseOrientation":356.65,"Words":[{"Id":"0HMMABUGDN2TU","Text":"LION","Outline":[0.0285,0.08781,0.14755,0.08781,0.14755,0.14217,0.0285,0.14217],"Confidence":0.3116,"Lang":"eng"},{"Id":"0HMMABUGDN2U0","Text":"°","Outline":[0.22078,0.29032,0.22547,0.29032,0.22547,0.2963,0.22078,0.2963],"Confidence":0.3252,"Lang":"eng"},{"Id":"0HMMABUGDN2U2","Text":"Ն","Outline":[0.29762,0.37515,0.33045,0.37515,0.33045,0.41219,0.29762,0.41219],"Confidence":0.3353,"Lang":"hye"},{"Id":"0HMMABUGDN2U4","Text":"Թռչնի","Outline":[0.42496,0.48626,0.62374,0.48626,0.62374,0.62605,0.42496,0.62605],"Confidence":0.9181,"Lang":"hye"},{"Id":"0HMMABUGDN2U6","Text":"Կաթ","Outline":[0.63817,0.48686,0.76768,0.48686,0.76768,0.62545,0.63817,0.62545],"Confidence":0.9722,"Lang":"hye"}]}]}}]}''';
-    final ocr = OCR.fromJson(jsonDecode(json));
-    // final json = await Utils.makeRequest(path);
+    // var json =
+    //     '''{"status":"success","id":"ef057ca2-9606-4893-988d-38c004a3f7c6","documents":[{"id":"1189602","version":"1.2","type":"ocr","pages":[{"fileIdx":0,"offset":0,"count":1}],"categorizedUrl":"https://dkseun49-msqjdnsd.s3.eu-central-1.amazonaws.com/sdf/prod/users/4026/document/2022-11-19T18_56_17_681Z_c4cc55f4-3f5c-4648-90a1-3a1808ae9672_splitted.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAV3WNTZDYXELUKXI3%2F20221119%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20221119T000000Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&recognizingFinished=1668884187046&X-Amz-Signature=b8f625b1d9e7cddd1a3d1a94024701fc378720cbbf1a49ce21f7defd8166c74c","plainTextBase64":"IExJT04KICAgICAgICDCsAogICAgICAgICAg1YYKICAgICAgICAgICAgICAg1LnVvNW51bbVqyDUv9Wh1akK","validationChecks":{"result":0,"validations":{"recognitionStatusCheck":{"type":"boolean","value":true}}},"textAnnotation":{"Pages":[{"ClockwiseOrientation":356.65,"Words":[{"Id":"0HMMABUGDN2TU","Text":"LION","Outline":[0.0285,0.08781,0.14755,0.08781,0.14755,0.14217,0.0285,0.14217],"Confidence":0.3116,"Lang":"eng"},{"Id":"0HMMABUGDN2U0","Text":"°","Outline":[0.22078,0.29032,0.22547,0.29032,0.22547,0.2963,0.22078,0.2963],"Confidence":0.3252,"Lang":"eng"},{"Id":"0HMMABUGDN2U2","Text":"Ն","Outline":[0.29762,0.37515,0.33045,0.37515,0.33045,0.41219,0.29762,0.41219],"Confidence":0.3353,"Lang":"hye"},{"Id":"0HMMABUGDN2U4","Text":"Թռչնի","Outline":[0.42496,0.48626,0.62374,0.48626,0.62374,0.62605,0.42496,0.62605],"Confidence":0.9181,"Lang":"hye"},{"Id":"0HMMABUGDN2U6","Text":"Կաթ","Outline":[0.63817,0.48686,0.76768,0.48686,0.76768,0.62545,0.63817,0.62545],"Confidence":0.9722,"Lang":"hye"}]}]}}]}''';
 
+    final json = await Utils.makeRequest(file.path);
+    final ocr = OCR.fromJson(jsonDecode(json));
     // final directory= await getApplicationDocumentsDirectory();
     // final filePath = '${directory.path}/file_${ocr.id}.txt';
     // final imagePath = '${directory.path}/image_${ocr.id}.jpg';

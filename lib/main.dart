@@ -1,5 +1,6 @@
 import 'package:diplomayin/screens/login_screen.dart';
 import 'package:diplomayin/screens/main_screen.dart';
+import 'package:diplomayin/screens/startup_screen.dart';
 import 'package:diplomayin/utils/utils.dart';
 import 'package:diplomayin/widget/app_error_widget.dart';
 import 'package:diplomayin/widget/button.dart';
@@ -44,8 +45,11 @@ class _MyAppState extends State<MyApp> {
                   }
                 }
               }
-              // return RecordingScreen();
-              return const LoginScreen();
+
+              return StartupScreen(
+                onComplete: (contexts) =>
+                    Utils.pushReplacement(context, const LoginScreen()),
+              );
             }));
   }
 }

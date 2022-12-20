@@ -23,7 +23,7 @@ class _OnBoardItemState extends State<OnBoardItem> {
       ),
       Image.asset(
         widget.itemType.getImagePath(),
-        // height: height / 4,
+        // \height: height / 4,
       ),
       Expanded(
         child: Padding(

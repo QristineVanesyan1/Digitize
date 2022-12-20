@@ -1,9 +1,9 @@
 import 'package:diplomayin/constants/constants.dart';
 import 'package:diplomayin/models/scan_item_view_model.dart';
 import 'package:diplomayin/repository/db_repository.dart';
+import 'package:diplomayin/screens/details_screen.dart';
 import 'package:diplomayin/screens/home_screen.dart';
 import 'package:diplomayin/screens/recording_screen.dart';
-import 'package:diplomayin/screens/speech_to_text.dart';
 import 'package:diplomayin/utils/utils.dart';
 import 'package:diplomayin/view_models/doc_item_view_model.dart';
 import 'package:diplomayin/widget/doc_item_widget.dart';
@@ -43,6 +43,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   list.length,
                   (index) => ScanItemWidget(
                         scanItemViewModel: list[index],
+                        onCardPressed: () {
+                          Utils.navigatorPush(
+                              context,
+                              TxtReaderScreen(
+                                scanItemViewModel: list[index],
+                              ));
+                        },
                       )),
             ));
 
@@ -53,7 +60,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             ? const EmptyList()
             : Utils.listViewWidget(List.generate(
                 docs.length,
-                (index) => DocItemWidget(docItemViewModel: docs[index]),
+                (index) => DocItemWidget(
+                    docItemViewModel: docs[index],
+                    onCardPressed: () {
+                      Utils.navigatorPush(
+                          context,
+                          TxtReaderScreen1(
+                            docItemViewModel: docs[index],
+                          ));
+                    }),
               )),
       );
   List<Widget> get _tabViews => [_scans, _docs];

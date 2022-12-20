@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:diplomayin/constants/constants.dart';
@@ -8,6 +9,7 @@ import 'package:diplomayin/utils/utils.dart';
 import 'package:diplomayin/view_models/ocr_view_model.dart';
 import 'package:diplomayin/widget/app_error_widget.dart';
 import 'package:diplomayin/widget/picker_button.dart';
+import 'package:diplomayin/widget/save_button.dart';
 import 'package:diplomayin/widget/save_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -42,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () => Navigator.of(context)
                 .pop(true), //TODO check if something was changes
           ),
-          actions: [_SaveButton(onTap: _onSavePressed)],
+          actions: [SaveButton(onTap: _onSavePressed)],
         ),
         body: Center(
           child: SingleChildScrollView(
@@ -161,9 +163,12 @@ class _HomeScreenState extends State<HomeScreen> {
     if (ocrViewModel != null) {
       final ocr = ocrViewModel!.model;
       try {
+        final pickedName = imageFile!.name;
         final directory = await getApplicationDocumentsDirectory();
-        final jsonPath = '${directory.path}/json_${ocr.id}.txt';
-        final filePath = '${directory.path}/file_${ocr.id}.txt';
+        var a = '/json_${ocr.id}.txt';
+        var b = '/file_${ocr.id}.txt';
+        final jsonPath = '${directory.path}$a';
+        final filePath = '${directory.path}$b';
 
         final filePathFile = File(filePath);
         final jsonPathFile = File(jsonPath);
@@ -174,12 +179,15 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         if (content != '') {
           await filePathFile.writeAsString(content);
-          await jsonPathFile.writeAsString(ocr.toJson().toString());
+          await jsonPathFile.writeAsString(json.encode(ocr.toJson()));
 
           await DbRepository.getDb();
-          await DbRepository()
-              .insertDataTxt(jsonPathTxt: jsonPath, filePathTxt: filePath);
+          await DbRepository().insertDataTxt(
+              jsonPathTxt: a, filePathTxt: b, titleStr: pickedName);
+          imageFile = null;
+
           // ignore: use_build_context_synchronously
+
           Utils.showAppDialog(
               context,
               AppErrorWidget(
@@ -203,13 +211,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _onSave() async {
     if (ocrViewModel != null) {
       final ocr = ocrViewModel!.model;
-      var data = await imageFile!.readAsBytes();
       try {
-        print(data);
+        final pickedName = imageFile!.name;
+        final last = pickedName.split(".").last;
+        var data = await imageFile!.readAsBytes();
         final directory = await getApplicationDocumentsDirectory();
-        final jsonPath = '${directory.path}/json_${ocr.id}.txt';
-        final filePath = '${directory.path}/file_${ocr.id}.txt';
-        final imagePath = '${directory.path}/image_${ocr.id}.png';
+        var a = '/json_${ocr.id}.txt';
+        var b = '/file_${ocr.id}.txt';
+        var c = '/image_${ocr.id}.$last';
+
+        final jsonPath = '${directory.path}$a';
+        final filePath = '${directory.path}$b';
+        final imagePath = '${directory.path}$c';
 
         final filePathFile = File(filePath);
         final jsonPathFile = File(jsonPath);
@@ -222,11 +235,12 @@ class _HomeScreenState extends State<HomeScreen> {
         if (content != '') {
           await filePathFile.writeAsString(content);
           await imagePathFile.writeAsBytes(data);
-          await jsonPathFile.writeAsString(ocr.toJson().toString());
+          await jsonPathFile.writeAsString(json.encode(ocr.toJson()));
 
           await DbRepository.getDb();
           await DbRepository().insertData(
-              jsonPath: jsonPath, filePath: filePath, imagePath: imagePath);
+              titleStr: pickedName, jsonPath: a, filePath: b, imagePath: c);
+          imageFile = null;
           Utils.showAppDialog(
               context,
               AppErrorWidget(
@@ -234,8 +248,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   onConfirm: (context) {
                     Navigator.of(context).pop(true);
                   }));
-
-          // await imagePathFile.writeAsBytes(data);
         } else {
           Utils.showAppDialog(
               context, const AppErrorWidget(message: 'Empty Content'));
@@ -261,17 +273,5 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       Utils.showAppDialog(context, const AppErrorWidget());
     }
-  }
-}
-
-class _SaveButton extends StatelessWidget {
-  const _SaveButton({this.onTap});
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-        icon: const Icon(Icons.save, color: Colors.white),
-        onPressed: () => onTap?.call());
   }
 }
